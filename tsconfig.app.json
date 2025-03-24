@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "src/hooks/useCalculations.ts", "src/hooks/useData.ts", "src/hooks/useParameters.ts"]
 }
