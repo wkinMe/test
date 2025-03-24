@@ -1,7 +1,7 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useReducer, useRef, useState } from 'react'
 import data from "./data/data.json";
 import config from "./data/config.json";
-import './App.css'
+import './App.scss'
 
 const useParameters = () => {
   const sizes = config.filter(i => i.type == "size")
@@ -24,9 +24,14 @@ function App() {
   const {sizes, strengths} = useParameters();
   const {pipes, lists} = useData();
 
-  const [selectedListId, setSelectedListId] = useState(0);
-  const [selectedPipeId, setSelectedPipeId] = useState(0);
-  const [selectedStrengthId, setStrengthId] = useState(0);
+  const [selectedPipeName, setSelectedPipeName] = useState(pipes[0].name);
+  const [selectedListName, setSelectedListName] = useState(lists[0].name);
+  const [selectedStrengthName, setStrengthName] = useState(strengths[0].name);
+
+  const widthRef = useRef<null | HTMLInputElement>(null);
+  const lengthRef = useRef<null | HTMLInputElement>(null);
+
+  const [listCount, setListCount] = useState(0);
 
 
   const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -35,40 +40,53 @@ function App() {
 
     switch(type) {
       case "pipe": {
-        const selectedPipe = pipes.find(i => i.name == value)!;
-        const selectePipeIndex = pipes.indexOf(selectedPipe);
-        setSelectedPipeId(selectePipeIndex);
+        const selectedPipeName = pipes.find(i => i.name == value)?.name;
+        setSelectedPipeName(selectedPipeName!);
         break;
       }
       case "list": {
-        const selectedList = lists.find(i => i.name == value)!;
-        const selectedListId = lists.indexOf(selectedList);
-        setSelectedListId(selectedListId);
+        const selectedListName = lists.find(i => i.name == value)?.name;
+        setSelectedListName(selectedListName!);
         break;
       }
       case "strength": {
-        const selectedStrength = strengths.find(i => i.name == value)!;
-        const selectedListId = strengths.indexOf(selectedStrength);
-        setStrengthId(selectedListId);
+        const selectedStrentghName = pipes.find(i => i.name == value)?.name;
+        setStrengthName(selectedStrentghName!);
         break;
       }
     }
   }
 
+  const handleClick = () => {
+    const list = lists.find(i => i.name == selectedListName)!;
+    const width = Number(widthRef.current?.value);
+    const length = Number(lengthRef.current?.value);
+    const count = Math.floor((width * length) / list.width!)
+
+    setListCount(count);
+  }
+
   return (
-    <>
-      <select onChange={handleSelect} data-type="pipe">
-        {pipes.map(i => <option value={i.name}>{i.name}</option>)}
+    <div className="app">
+    <div className="settings">
+      <select value={selectedPipeName} onChange={handleSelect} data-type="pipe">
+        {pipes.map(i => <option key={i.name} value={i.name}>{i.name}</option>)}
       </select>
-      <select onChange={handleSelect} data-type="list">
-        {lists.map(i => <option value={i.name}>{i.name}</option>)}
+      <select value={selectedListName} onChange={handleSelect} data-type="list">
+        {lists.map(i => <option key={i.name} value={i.name}>{i.name}</option>)}
       </select>
-      <input type="number" max={sizes.width?.max} min={sizes.width?.min}/>
-      <input type="number" max={sizes.length?.max} min={sizes.length?.min}/>
-      <select onChange={handleSelect} data-type="strength">
-        {strengths.map(i => <option value={i.name}>{i.name}</option>)}
+      <select value={selectedStrengthName} onChange={handleSelect} data-type="strength">
+        {strengths.map(i => <option key={i.name} value={i.name}>{i.name}</option>)}
       </select>
-    </>
+
+      <input type="number" ref={widthRef} max={sizes.width?.max} min={sizes.width?.min}/>
+      <input type="number" ref = {lengthRef} max={sizes.length?.max} min={sizes.length?.min}/>
+    </div>
+    <div>
+    </div>
+      {listCount}
+      <button onClick={handleClick}>Count</button>
+    </div>
   )
 }
 

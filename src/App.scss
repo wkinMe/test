@@ -1,0 +1,13 @@
+.app {
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    justify-content: space-around;
+
+    
+    .settings {
+        display: flex;
+        flex-direction: column;
+        gap: 35px;
+    }
+}
