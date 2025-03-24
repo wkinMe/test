@@ -10,4 +10,12 @@
         flex-direction: column;
         gap: 35px;
     }
+
+    table {
+        border: 1px solid #000;
+
+        td {
+            border: 1px solid #000;
+        }
+    }
 }
